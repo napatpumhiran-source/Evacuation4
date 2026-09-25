@@ -1,0 +1,1005 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Student Status Drill</title>
+
+<style>
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    background: #f3f4f6;
+    color: #1f2937;
+}
+
+/* =========================
+   HEADER
+========================= */
+
+header {
+    background: #111827;
+    color: white;
+    padding: 24px;
+    text-align: center;
+}
+
+header h1 {
+    margin: 0;
+    font-size: 30px;
+}
+
+header p {
+    margin: 8px 0 0;
+    opacity: 0.8;
+}
+
+/* =========================
+   MAIN
+========================= */
+
+.container {
+    max-width: 1100px;
+    margin: 25px auto;
+    padding: 0 20px;
+}
+
+.card {
+    background: white;
+    border-radius: 14px;
+    padding: 24px;
+    margin-bottom: 22px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+}
+
+.card h2 {
+    margin-top: 0;
+}
+
+/* =========================
+   CLASS DASHBOARD
+========================= */
+
+.dashboard {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 12px;
+}
+
+.class-box {
+    background: #e5e7eb;
+    border-radius: 12px;
+    padding: 15px;
+    border-left: 7px solid #9ca3af;
+    min-height: 95px;
+}
+
+.class-box.submitted {
+    background: #dcfce7;
+    border-left-color: #16a34a;
+}
+
+.class-name {
+    font-size: 17px;
+    font-weight: bold;
+}
+
+.class-status {
+    margin-top: 7px;
+    font-size: 14px;
+}
+
+.class-details {
+    margin-top: 8px;
+    font-size: 13px;
+}
+
+/* =========================
+   FORM
+========================= */
+
+label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 8px;
+}
+
+select,
+textarea {
+    width: 100%;
+    padding: 14px;
+    border: 1px solid #d1d5db;
+    border-radius: 9px;
+    font-size: 17px;
+    font-family: inherit;
+}
+
+select:focus,
+textarea:focus {
+    outline: 2px solid #2563eb;
+}
+
+/* =========================
+   STATUS BUTTONS
+========================= */
+
+.status-buttons {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-top: 20px;
+}
+
+.status-button {
+    border: none;
+    border-radius: 12px;
+    padding: 18px 10px;
+    font-size: 17px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.15s;
+}
+
+.status-button:hover {
+    transform: translateY(-2px);
+}
+
+.present {
+    background: #22c55e;
+    color: white;
+}
+
+.missing {
+    background: #f59e0b;
+    color: white;
+}
+
+.absent {
+    background: #ef4444;
+    color: white;
+}
+
+.leave {
+    background: #3b82f6;
+    color: white;
+}
+
+.status-button.selected {
+    outline: 4px solid #111827;
+    transform: scale(1.02);
+}
+
+/* =========================
+   NAME AREA
+========================= */
+
+.name-area {
+    display: none;
+    margin-top: 18px;
+}
+
+.name-area.show {
+    display: block;
+}
+
+.name-area p {
+    margin-bottom: 8px;
+    font-weight: bold;
+}
+
+textarea {
+    min-height: 90px;
+    resize: vertical;
+}
+
+/* =========================
+   SUBMIT
+========================= */
+
+.submit-area {
+    margin-top: 20px;
+}
+
+.submit-button {
+    width: 100%;
+    background: #111827;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    padding: 16px;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.submit-button:hover {
+    background: #374151;
+}
+
+/* =========================
+   MESSAGE
+========================= */
+
+.message {
+    display: none;
+    padding: 14px;
+    border-radius: 9px;
+    margin-bottom: 18px;
+    font-weight: bold;
+}
+
+.message.success {
+    display: block;
+    background: #dcfce7;
+    color: #166534;
+}
+
+.message.warning {
+    display: block;
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.message.error {
+    display: block;
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+/* =========================
+   INSTRUCTIONS
+========================= */
+
+.instructions {
+    background: #eff6ff;
+    border-radius: 10px;
+    padding: 15px;
+    margin-bottom: 20px;
+    color: #1e40af;
+}
+
+/* =========================
+   MOBILE
+========================= */
+
+@media (max-width: 700px) {
+
+    .status-buttons {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .dashboard {
+        grid-template-columns: 1fr 1fr;
+    }
+
+}
+
+@media (max-width: 450px) {
+
+    .dashboard {
+        grid-template-columns: 1fr;
+    }
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<header>
+
+    <h1>Student Status Drill</h1>
+
+    <p>
+        Select your class and submit your student status
+    </p>
+
+</header>
+
+
+<div class="container">
+
+
+    <!-- =========================
+         CLASS STATUS
+    ========================== -->
+
+    <div class="card">
+
+        <h2>Class Status</h2>
+
+        <div class="dashboard" id="dashboard"></div>
+
+    </div>
+
+
+    <!-- =========================
+         TEACHER FORM
+    ========================== -->
+
+    <div class="card">
+
+        <h2>Teacher Submission</h2>
+
+        <div class="instructions">
+
+            <strong>How to submit:</strong><br>
+
+            Select your class → choose the appropriate status → 
+            enter names if necessary → Submit.
+
+        </div>
+
+
+        <div id="message" class="message"></div>
+
+
+        <!-- CLASS -->
+
+        <label for="classSelect">
+            Your Class
+        </label>
+
+        <select id="classSelect">
+
+            <option value="">
+                -- Select Your Class --
+            </option>
+
+        </select>
+
+
+        <!-- STATUS -->
+
+        <div id="statusArea" style="display:none;">
+
+            <label style="margin-top:20px;">
+                Student Status
+            </label>
+
+
+            <div class="status-buttons">
+
+
+                <button
+                    class="status-button present"
+                    onclick="selectStatus('All Present')">
+
+                    🟢<br>
+                    All Present
+
+                </button>
+
+
+                <button
+                    class="status-button missing"
+                    onclick="selectStatus('Missing')">
+
+                    🟡<br>
+                    Missing
+
+                </button>
+
+
+                <button
+                    class="status-button absent"
+                    onclick="selectStatus('Absent')">
+
+                    🔴<br>
+                    Absent
+
+                </button>
+
+
+                <button
+                    class="status-button leave"
+                    onclick="selectStatus('Leave Early')">
+
+                    🔵<br>
+                    Leave Early
+
+                </button>
+
+            </div>
+
+
+            <!-- NAME INPUT -->
+
+            <div
+                id="nameArea"
+                class="name-area">
+
+                <p id="nameInstruction">
+                    Enter student name(s):
+                </p>
+
+                <textarea
+                    id="studentNames"
+                    placeholder="Type student name(s) here...">
+                </textarea>
+
+                <p class="small">
+                    If there is more than one student,
+                    you can put each name on a new line.
+                </p>
+
+            </div>
+
+
+            <!-- SUBMIT -->
+
+            <div class="submit-area">
+
+                <button
+                    class="submit-button"
+                    onclick="submitStatus()">
+
+                    SUBMIT CLASS STATUS
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+/* =========================================================
+   PRE-SET CLASSES
+========================================================= */
+
+const classes = [
+
+    "Toddler A",
+    "Toddler B",
+    "Toddler C",
+
+    "EY 1A",
+    "EY 1B",
+    "EY 1C",
+
+    "EY 2A",
+    "EY 2B",
+    "EY 2C",
+
+    "EY 3A",
+    "EY 3B",
+    "EY 3C",
+    "EY 3D",
+    "EY 3E",
+
+    "Primary 1A",
+    "Primary 1B",
+    "Primary 1C",
+    "Primary 1D",
+    "Primary 1E",
+    "Primary 1F",
+
+    "Primary 2A",
+    "Primary 2B",
+    "Primary 2C",
+    "Primary 2D",
+    "Primary 2E",
+    "Primary 2F",
+
+    "Primary 3A",
+    "Primary 3B",
+    "Primary 3C",
+    "Primary 3D",
+    "Primary 3E",
+
+    "Primary 4A",
+    "Primary 4B",
+    "Primary 4C",
+    "Primary 4D",
+    "Primary 4E",
+
+    "Primary 5A",
+    "Primary 5B",
+    "Primary 5C",
+    "Primary 5D",
+    "Primary 5E",
+
+    "Middle 6A",
+    "Middle 6B",
+    "Middle 6C",
+    "Middle 6D",
+    "Middle 6E",
+
+    "Middle 7A",
+    "Middle 7B",
+    "Middle 7C",
+
+    "Middle 8A",
+    "Middle 8B"
+
+];
+
+
+/* =========================================================
+   VARIABLES
+========================================================= */
+
+let selectedStatus = "";
+
+let submissions =
+    JSON.parse(
+        localStorage.getItem("classSubmissions")
+    ) || {};
+
+
+/* =========================================================
+   CREATE CLASS DROPDOWN
+========================================================= */
+
+const classSelect =
+    document.getElementById("classSelect");
+
+
+classes.forEach(className => {
+
+    const option =
+        document.createElement("option");
+
+    option.value = className;
+
+    option.textContent = className;
+
+    classSelect.appendChild(option);
+
+});
+
+
+/* =========================================================
+   CLASS SELECTION
+========================================================= */
+
+classSelect.addEventListener("change", function() {
+
+    const statusArea =
+        document.getElementById("statusArea");
+
+
+    if (this.value === "") {
+
+        statusArea.style.display = "none";
+
+        return;
+
+    }
+
+
+    statusArea.style.display = "block";
+
+
+    selectedStatus = "";
+
+    document
+        .getElementById("studentNames")
+        .value = "";
+
+
+    document
+        .getElementById("nameArea")
+        .classList.remove("show");
+
+
+    clearSelectedButtons();
+
+});
+
+
+/* =========================================================
+   SELECT STATUS
+========================================================= */
+
+function selectStatus(status) {
+
+    selectedStatus = status;
+
+
+    clearSelectedButtons();
+
+
+    const buttons =
+        document.querySelectorAll(
+            ".status-button"
+        );
+
+
+    buttons.forEach(button => {
+
+        if (
+            button.textContent
+                .includes(status)
+        ) {
+
+            button.classList.add(
+                "selected"
+            );
+
+        }
+
+    });
+
+
+    const nameArea =
+        document.getElementById(
+            "nameArea"
+        );
+
+
+    const nameInstruction =
+        document.getElementById(
+            "nameInstruction"
+        );
+
+
+    if (status === "All Present") {
+
+        nameArea.classList.remove(
+            "show"
+        );
+
+    } else {
+
+        nameArea.classList.add(
+            "show"
+        );
+
+
+        nameInstruction.textContent =
+            "Enter the name of the " +
+            status.toLowerCase() +
+            " student(s):";
+
+    }
+
+}
+
+
+/* =========================================================
+   CLEAR BUTTON SELECTION
+========================================================= */
+
+function clearSelectedButtons() {
+
+    document
+        .querySelectorAll(
+            ".status-button"
+        )
+        .forEach(button => {
+
+            button.classList.remove(
+                "selected"
+            );
+
+        });
+
+}
+
+
+/* =========================================================
+   SUBMIT
+========================================================= */
+
+function submitStatus() {
+
+    const className =
+        classSelect.value;
+
+
+    if (!className) {
+
+        showMessage(
+            "Please select your class.",
+            "warning"
+        );
+
+        return;
+
+    }
+
+
+    if (!selectedStatus) {
+
+        showMessage(
+            "Please select a student status.",
+            "warning"
+        );
+
+        return;
+
+    }
+
+
+    let names = [];
+
+
+    if (selectedStatus !== "All Present") {
+
+        const rawNames =
+            document
+                .getElementById(
+                    "studentNames"
+                )
+                .value
+                .trim();
+
+
+        if (!rawNames) {
+
+            showMessage(
+                "Please enter the student name.",
+                "warning"
+            );
+
+            return;
+
+        }
+
+
+        names =
+            rawNames
+                .split("\n")
+                .map(name => name.trim())
+                .filter(name => name !== "");
+
+    }
+
+
+    submissions[className] = {
+
+        status: selectedStatus,
+
+        names: names,
+
+        submittedAt:
+            new Date().toLocaleTimeString()
+
+    };
+
+
+    localStorage.setItem(
+        "classSubmissions",
+        JSON.stringify(submissions)
+    );
+
+
+    updateDashboard();
+
+
+    showMessage(
+        className +
+        " submitted successfully.",
+        "success"
+    );
+
+
+    /*
+       Reset the form
+    */
+
+    selectedStatus = "";
+
+    clearSelectedButtons();
+
+    document
+        .getElementById(
+            "studentNames"
+        )
+        .value = "";
+
+    document
+        .getElementById(
+            "nameArea"
+        )
+        .classList.remove("show");
+
+}
+
+
+/* =========================================================
+   DASHBOARD
+========================================================= */
+
+function updateDashboard() {
+
+    const dashboard =
+        document.getElementById(
+            "dashboard"
+        );
+
+
+    dashboard.innerHTML = "";
+
+
+    classes.forEach(className => {
+
+        const box =
+            document.createElement("div");
+
+
+        box.className =
+            "class-box";
+
+
+        const data =
+            submissions[className];
+
+
+        if (!data) {
+
+            box.innerHTML = `
+
+                <div class="class-name">
+                    ${className}
+                </div>
+
+                <div class="class-status">
+                    🟡 Not Submitted
+                </div>
+
+            `;
+
+        }
+
+        else {
+
+            box.classList.add(
+                "submitted"
+            );
+
+
+            let icon = "🟢";
+
+
+            if (
+                data.status === "Missing"
+            ) {
+
+                icon = "🟡";
+
+            }
+
+            else if (
+                data.status === "Absent"
+            ) {
+
+                icon = "🔴";
+
+            }
+
+            else if (
+                data.status === "Leave Early"
+            ) {
+
+                icon = "🔵";
+
+            }
+
+
+            let details = "";
+
+
+            if (
+                data.status !==
+                "All Present"
+            ) {
+
+                details = `
+
+                    <div class="class-details">
+
+                        ${data.status}:
+
+                        <strong>
+                            ${data.names.join(", ")}
+                        </strong>
+
+                    </div>
+
+                `;
+
+            }
+
+
+            box.innerHTML = `
+
+                <div class="class-name">
+
+                    ${className}
+
+                </div>
+
+
+                <div class="class-status">
+
+                    ${icon}
+                    ${data.status}
+
+                </div>
+
+
+                ${details}
+
+
+                <div
+                    class="class-details">
+
+                    Submitted:
+                    ${data.submittedAt}
+
+                </div>
+
+            `;
+
+        }
+
+
+        dashboard.appendChild(box);
+
+    });
+
+}
+
+
+/* =========================================================
+   MESSAGE
+========================================================= */
+
+function showMessage(text, type) {
+
+    const message =
+        document.getElementById(
+            "message"
+        );
+
+
+    message.textContent = text;
+
+
+    message.className =
+        "message " + type;
+
+
+    message.style.display =
+        "block";
+
+
+    setTimeout(() => {
+
+        message.style.display =
+            "none";
+
+    }, 4000);
+
+}
+
+
+/* =========================================================
+   INITIALIZE
+========================================================= */
+
+updateDashboard();
+
+</script>
+
+</body>
+</html>
+```
